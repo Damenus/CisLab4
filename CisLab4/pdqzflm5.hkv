@@ -103,6 +103,7 @@ namespace CisLab4
 
         }
 
+
         public class Program
         {
             List<Car> myCars = new List<Car>(){
@@ -193,14 +194,6 @@ namespace CisLab4
 
             }
 
-            public void zadanieC()
-            {
-                BindingList<Car> myCarsBindingList = new BindingList<Car>(myCars);
-                BindingSource carBindingSource = new BindingSource();
-                carBindingSource.DataSource = myCarsBindingList;
-                //Drag a DataGridView control from the Toolbox to the form.
-                // dataGridView1.DataSource = carBindingSource;
-            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)

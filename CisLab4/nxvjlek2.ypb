@@ -103,6 +103,7 @@ namespace CisLab4
 
         }
 
+
         public class Program
         {
             List<Car> myCars = new List<Car>(){
@@ -128,7 +129,7 @@ namespace CisLab4
 
             public void zadanieA()
             {
-                //a query expression syntax 
+                //a
                 var resultA = from e in myCars
                               where e.Model == "A6"
                               group e by new { 
@@ -137,10 +138,10 @@ namespace CisLab4
                               } into g
                               group g.Key.avgHPPL by g.Key.engineType into a
                               orderby a.Average() descending 
-                              select new { engineType = a.Key, avgHPPL = a.Average() };
+                              select new { engineType = a.Key, avgHPPL = a.Average() };                             
+                           
 
-
-                //b method-based query syntax
+                //b
                 //var resultB = myCars
                 //    .Where(e => e.Model == "A6")             
                 //    .GroupBy(e => new { engineType = e.Engine.Model == "TDI" ? "disel" : "petrol", hppl = e.Engine.HorsePower / e.Engine.Displacement })
@@ -160,7 +161,7 @@ namespace CisLab4
             public static int Compare(Car a, Car b)
             {
                 if (a.Engine.HorsePower == b.Engine.HorsePower) return 0;
-                else return a.Engine.HorsePower < b.Engine.HorsePower ? 1 : -1;
+                else return a.Engine.HorsePower > b.Engine.HorsePower ? 1 : -1;
             }
            
             public static bool Find(Car car)
@@ -173,7 +174,7 @@ namespace CisLab4
 
             public static void ForEach(Car car)
             {
-                string message = String.Format(" Model: {0}\n Silnik: {1}\n Displacement: {2}\n HorsePower: {3}\n Rok: {4}", car.Model, car.Engine.Model, car.Engine.Displacement, car.Engine.HorsePower, car.Year);
+                string message = String.Format("Model:{0}\n Silnik: {1}\n Displacement: {2}\n HorsePower: {3}\n Rok: {4}", car.Model, car.Engine.Model, car.Engine.Displacement, car.Engine.HorsePower, car.Year);
                 string caption = "Opis samochodu";
                 MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
@@ -193,14 +194,6 @@ namespace CisLab4
 
             }
 
-            public void zadanieC()
-            {
-                BindingList<Car> myCarsBindingList = new BindingList<Car>(myCars);
-                BindingSource carBindingSource = new BindingSource();
-                carBindingSource.DataSource = myCarsBindingList;
-                //Drag a DataGridView control from the Toolbox to the form.
-                // dataGridView1.DataSource = carBindingSource;
-            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)

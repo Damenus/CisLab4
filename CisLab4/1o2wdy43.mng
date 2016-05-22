@@ -17,8 +17,7 @@ namespace CisLab4
         {
             InitializeComponent();
             Program code = new Program();
-            code.zadanieA();
-            code.zadanieB();
+            code.query();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -103,6 +102,7 @@ namespace CisLab4
 
         }
 
+
         public class Program
         {
             List<Car> myCars = new List<Car>(){
@@ -126,9 +126,9 @@ namespace CisLab4
                // dataGridView1.DataSource = carBindingSource;
             }
 
-            public void zadanieA()
+            public void query()
             {
-                //a query expression syntax 
+                //a
                 var resultA = from e in myCars
                               where e.Model == "A6"
                               group e by new { 
@@ -136,71 +136,20 @@ namespace CisLab4
                                   avgHPPL = e.Engine.HorsePower / e.Engine.Displacement
                               } into g
                               group g.Key.avgHPPL by g.Key.engineType into a
-                              orderby a.Average() descending 
-                              select new { engineType = a.Key, avgHPPL = a.Average() };
+                              orderby a
+                              select new { engineType = a.Key, avgHPPL = a }; 
 
+                
+                             
 
-                //b method-based query syntax
-                //var resultB = myCars
-                //    .Where(e => e.Model == "A6")             
-                //    .GroupBy(e => new { engineType = e.Engine.Model == "TDI" ? "disel" : "petrol", hppl = e.Engine.HorsePower / e.Engine.Displacement })
-                //    //.GroupBy(e => e.Key.engineType,(key, d) => new { engineType = key,  Average() = d})
-                //    // .Average(e => e.Key.hppl)
-                //    //.GroupBy(e => e.Key.engineType, e => e.Average(), (key, d) => new { engineType = key, })
-                //    //.Average(e => e.Average())
-                //    // .OrderByDescending(e => e.Average())
-                //     .Select(e => new { engineType = e.Key, avgHPPL = e.Average() });
-                //   //.Select(e => e);
+                //b
+               // var resultB = myCars.Where(e => e.Model == "A6").Select(e => new { engineType = e.Engine.Model == "TDI" ? "disel" : "petrol", hppl = e.Engine.HorsePower / e.Engine.Displacement }).GroupBy(e => e.engineType).Select(g => new { name = g.Key, avg = g.Average() });
 
 
                 foreach (var e in resultA) Console.WriteLine(e.engineType + ": " + e.avgHPPL);
-                //foreach (var e in resultB) Console.WriteLine(e.Key + ": " + e);
-            }
-
-            public static int Compare(Car a, Car b)
-            {
-                if (a.Engine.HorsePower == b.Engine.HorsePower) return 0;
-                else return a.Engine.HorsePower < b.Engine.HorsePower ? 1 : -1;
-            }
-           
-            public static bool Find(Car car)
-            {
-                if (car.Engine.Model == "TDI")
-                    return true;
-                else
-                    return false;
-            }
-
-            public static void ForEach(Car car)
-            {
-                string message = String.Format(" Model: {0}\n Silnik: {1}\n Displacement: {2}\n HorsePower: {3}\n Rok: {4}", car.Model, car.Engine.Model, car.Engine.Displacement, car.Engine.HorsePower, car.Year);
-                string caption = "Opis samochodu";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-            }
-
-            public void zadanieB()
-            {
-                Func<Car, Car, int> arg1;
-                Predicate<Car> arg2;
-                Action<Car> arg3;
-
-                arg1 = new Func<Car, Car, int>(Compare);
-                arg2 = new Predicate<Car>(Find);
-                arg3 = new Action<Car>(ForEach);
-                
-                myCars.Sort(new Comparison<Car>(arg1));
-                myCars.FindAll(arg2).ForEach(arg3);
 
             }
 
-            public void zadanieC()
-            {
-                BindingList<Car> myCarsBindingList = new BindingList<Car>(myCars);
-                BindingSource carBindingSource = new BindingSource();
-                carBindingSource.DataSource = myCarsBindingList;
-                //Drag a DataGridView control from the Toolbox to the form.
-                // dataGridView1.DataSource = carBindingSource;
-            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
