@@ -1,0 +1,366 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+
+namespace CisLab4
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            Program code = new Program();
+            code.zadanieA();
+            //code.zadanieB();
+            code.zadanieC(dataGridView1);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        [XmlType("car")]
+        [XmlRoot("car")]
+        public class Car
+        {
+            [XmlElement(ElementName = "model")]
+            private string model;
+            [XmlElement(ElementName = "engine")]
+            private Engine motor;
+            [XmlElement(ElementName = "year")]
+            private int year;
+
+            public string Model
+            {
+                get { return this.model; }
+                set { this.model = value; }
+            }
+
+            public Engine Engine
+            {
+                get { return this.motor; }
+                set { this.motor = value; }
+            }
+
+            public int Year
+            {
+                get { return this.year; }
+                set { this.year = value; }
+            }
+
+            public Car() { }
+
+            public Car(string model, Engine engine, int year)
+            {
+                this.model = model;
+                this.motor = engine;
+                this.year = year;
+            }
+        }
+
+        public class Engine
+        {
+            [XmlElement(ElementName = "displacement")]
+            private double displacement;
+            [XmlElement(ElementName = "horsePower")]
+            private double horsePower;
+            [XmlAttribute(AttributeName = "model")]
+            private string model;
+
+            public double Displacement
+            {
+                get { return this.displacement; }
+                set { this.displacement = value; }
+            }
+
+            public double HorsePower
+            {
+                get { return this.horsePower; }
+                set { this.horsePower = value; }
+            }
+
+            public string Model
+            {
+                get { return this.model; }
+                set { this.model = value; }
+            }
+
+            public Engine() { }
+
+            public Engine(double displacement, double power, string model)
+            {
+                this.displacement = displacement;
+                this.horsePower = power;
+                this.model = model;
+            }
+
+        }
+
+        public class Program
+        {
+            List<Car> myCars = new List<Car>(){
+                    new Car("E250", new Engine(1.8, 204, "CGI"), 2009),
+                    new Car("E350", new Engine(3.5, 292, "CGI"), 2009),
+                    new Car("A6", new Engine(2.5, 187, "FSI"), 2012),
+                    new Car("A6", new Engine(2.8, 220, "FSI"), 2012),
+                    new Car("A6", new Engine(3.0, 295, "TFSI"), 2012),
+                    new Car("A6", new Engine(2.0, 175, "TDI"), 2011),
+                    new Car("A6", new Engine(3.0, 309, "TDI"), 2011),
+                    new Car("S6", new Engine(4.0, 414, "TFSI"), 2012),
+                    new Car("S8", new Engine(4.0, 513, "TFSI"), 2012)
+                    };
+
+            public Program()
+            {
+                
+            }
+
+            public void zadanieA()
+            {
+                //a query expression syntax 
+                var resultA = from e in myCars
+                              where e.Model == "A6"
+                              group e by new { 
+                                  engineType = e.Engine.Model == "TDI" ? "disel" : "petrol",
+                                  avgHPPL = e.Engine.HorsePower / e.Engine.Displacement
+                              } into g
+                              group g.Key.avgHPPL by g.Key.engineType into a
+                              orderby a.Average() descending 
+                              select new { engineType = a.Key, avgHPPL = a.Average() };
+
+
+                //b method-based query syntax
+                //var resultB = myCars
+                //    .Where(e => e.Model == "A6")             
+                //    .GroupBy(e => new { engineType = e.Engine.Model == "TDI" ? "disel" : "petrol", hppl = e.Engine.HorsePower / e.Engine.Displacement })
+                //    //.GroupBy(e => e.Key.engineType,(key, d) => new { engineType = key,  Average() = d})
+                //    // .Average(e => e.Key.hppl)
+                //    //.GroupBy(e => e.Key.engineType, e => e.Average(), (key, d) => new { engineType = key, })
+                //    //.Average(e => e.Average())
+                //    // .OrderByDescending(e => e.Average())
+                //     .Select(e => new { engineType = e.Key, avgHPPL = e.Average() });
+                //   //.Select(e => e);
+
+
+                foreach (var e in resultA) Console.WriteLine(e.engineType + ": " + e.avgHPPL);
+                //foreach (var e in resultB) Console.WriteLine(e.Key + ": " + e);
+            }
+
+            public static int Compare(Car a, Car b)
+            {
+                if (a.Engine.HorsePower == b.Engine.HorsePower) return 0;
+                else return a.Engine.HorsePower < b.Engine.HorsePower ? 1 : -1;
+            }
+           
+            public static bool Find(Car car)
+            {
+                if (car.Engine.Model == "TDI")
+                    return true;
+                else
+                    return false;
+            }
+
+            public static void ForEach(Car car)
+            {
+                string message = String.Format(" Model: {0}\n Silnik: {1}\n Displacement: {2}\n HorsePower: {3}\n Rok: {4}", car.Model, car.Engine.Model, car.Engine.Displacement, car.Engine.HorsePower, car.Year);
+                string caption = "Opis samochodu";
+                MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+
+            public void zadanieB()
+            {
+                Func<Car, Car, int> arg1;
+                Predicate<Car> arg2;
+                Action<Car> arg3;
+
+                arg1 = new Func<Car, Car, int>(Compare);
+                arg2 = new Predicate<Car>(Find);
+                arg3 = new Action<Car>(ForEach);
+                
+                myCars.Sort(new Comparison<Car>(arg1));
+                myCars.FindAll(arg2).ForEach(arg3);
+
+            }
+
+            public class SortableBindingList<T>: BindingList<T>
+            {
+                private List<Car> myCars;
+
+
+                public class PropertyComparer<T>:IComparer<T>
+                {
+                    PropertyDescriptor property;
+                    private ListSortDirection direction;
+
+                    public PropertyComparer(PropertyDescriptor property)
+                    {
+                        this.property = property;
+                    }
+
+                    public PropertyComparer(PropertyDescriptor property, ListSortDirection direction)
+                    {
+                        // TODO: Complete member initialization
+                        this.property = property;
+                        this.direction = direction;
+                    }
+
+                    public int Compare(T x, T y)
+                    {
+                        return (property.GetValue(x) as IComparable).CompareTo(property.GetValue(y));
+                    }
+                }
+
+                public SortableBindingList()
+                {
+
+                }
+
+                //public SortableBindingList(List<Car> myCars)
+                //{
+                //    // TODO: Complete member initialization
+                //    this.myCars = myCars;
+                //}
+            
+                public SortableBindingList(List<T> list)
+                    : base(list)
+                {
+ 
+                }
+
+                protected override bool SupportsSortingCore
+                {
+                   get { return true; }
+                }
+
+                protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
+                {
+                    if (property.PropertyType.GetInterface("IComparable") != null)
+                    {
+                         List<T> items = this.Items as List<T>;
+
+                        // Apply and set the sort, if items to sort
+                        if( items != null ) 
+                        {
+                          PropertyComparer<T> pc = new PropertyComparer<T>(property, direction); //wywalic direction
+                          items.Sort(pc);
+                        }
+
+                        // Let bound controls know they should refresh their views
+                        this.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+  
+                    }
+                }
+
+                protected override bool SupportsSearchingCore
+                {
+                    get { return true; }
+                }
+
+                protected override int FindCore(PropertyDescriptor property, object key)
+                {
+                    // Specify search columns
+                    if (property == null) return -1;
+
+                    // Get list to search
+                    List<T> items = this.Items as List<T>;
+
+                    // Traverse list for value
+                    foreach (T item in items)
+                    {
+                        if (property.PropertyType == typeof(string))
+                        {
+                            // Test column search value
+                            string value = (string)property.GetValue(item);
+
+                            // If value is the search value, return the 
+                            // index of the data item
+                            if ((string)key == value) return IndexOf(item);
+                        }
+                        if (property.PropertyType == typeof(Int32))
+                        {
+                            Int32 value = (Int32)property.GetValue(item);
+                            if ((Int32)key == value) return IndexOf(item);
+                        }
+
+
+                    }
+                    return -1;
+
+                }
+
+                            
+
+            }
+
+            public void zadanieC(DataGridView dataGridView1)
+            {
+                SortableBindingList<Car> myCarsBindingList = new SortableBindingList<Car>(myCars);
+                //BindingList<Car> myCarsBindingList = new BindingList<Car>(myCars);
+                BindingSource carBindingSource = new BindingSource();
+                carBindingSource.DataSource = myCarsBindingList;
+                //Drag a DataGridView control from the Toolbox to the form.
+                dataGridView1.DataSource = carBindingSource;
+
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void toolStripTextBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripLabel2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripComboBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripComboBox1_GotFocus(object sender, EventArgs e)
+        {
+            // Bail if no data source
+            if (_bindingSource == null) return;
+            if (_bindingSource.DataSource == null) return;
+
+            this.toolStripComboBox1.Items.Clear();
+
+            // Add column names to Search In list
+            PropertyDescriptorCollection properties =
+              ((ITypedList)bindingSource).GetItemProperties(null);
+            foreach (PropertyDescriptor property in properties)
+            {
+                this.toolStripComboBox1.Items.Insert(0, property.Name);
+            }
+
+            // Select first column name in list, if column names were added
+            if (this.toolStripComboBox1.Items.Count > 0)
+            {
+                this.toolStripComboBox1.SelectedIndex = 0;
+            }
+        }
+
+       
+
+    }
+}

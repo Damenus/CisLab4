@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-namespace CisLab4
+﻿namespace CisLab4
 {
     partial class Form1
     {
@@ -37,7 +36,6 @@ namespace CisLab4
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -103,22 +101,11 @@ namespace CisLab4
             this.toolStripButton1.Text = "Find";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(477, 274);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(73, 31);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(581, 468);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form1";
@@ -135,7 +122,7 @@ namespace CisLab4
         #endregion
 
 
-        public class ItemFoundEventArgs : System.EventArgs
+        public class ItemFoundEventArgs : EventArgs
         {
             private int _index;
             public ItemFoundEventArgs(int index) { _index = index; }
@@ -155,7 +142,13 @@ namespace CisLab4
                 set { _bindingSource = value; }
             }
 
-          
+            public void Find()
+            {
+                // Don't search if the underlying IBindingList implementation
+                // doesn't support searching
+               // if (!((IBindingList)_bindingSource).SupportsSorting) return;
+
+            }
 
             public event ItemFoundEventHandler ItemFound;
             protected virtual void OnItemFound(ItemFoundEventArgs e)
@@ -164,33 +157,6 @@ namespace CisLab4
                 if (ItemFound != null) ItemFound(this, e);
             }
 
-
-
-            internal void Find(FindStrip findStrip, string find, string findIn)
-            {
-                // Don't search if the underlying IBindingList implementation
-                // doesn't support searching
-                // if (!((IBindingList)_bindingSource).SupportsSorting) return;
-
-                // Don't search if nothing specified to look for
-               // string find = toolStripTextBox1;
-                if (string.IsNullOrEmpty(find)) return;
-
-                // Don't search of a column isn't specified to search in
-                //string findIn = this.searchInToolStripComboBox.Text;
-                if (string.IsNullOrEmpty(findIn)) return;
-
-                // Get the PropertyDescriptor
-                PropertyDescriptorCollection properties =
-                  ((ITypedList)_bindingSource).GetItemProperties(null);
-                PropertyDescriptor property = properties[findIn];
-
-                // Find a value in a column
-                int index = _bindingSource.Find(property, find);
-
-
-                this.OnItemFound(new ItemFoundEventArgs(index));
-            }
         }
 
         private System.Windows.Forms.DataGridView dataGridView1;
@@ -200,7 +166,6 @@ namespace CisLab4
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -369,7 +369,7 @@ namespace CisLab4
             this.toolStrip1.Find(this.toolStrip1, this.toolStripTextBox1.Text, this.toolStripComboBox1.SelectedText);
             //Find(dataGridView1.DataSource as BindingSource, toolStripComboBox1.SelectedItem as PropertyInfo, this.toolStripTextBox1.Text);
             var source = dataGridView1.DataSource;
-            var property = toolStripComboBox1.SelectedItem.ToString();
+            var property = toolStripComboBox1.SelectedItem.ToString;
             var key = this.toolStripTextBox1.Text;
 
             string searchValue = toolStripTextBox1.Text;

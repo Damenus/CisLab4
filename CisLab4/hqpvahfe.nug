@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -124,12 +123,8 @@ namespace CisLab4
                     }
                     if (property.PropertyType == typeof(Int32))
                     {
-                        //Int32 value = (Int32)property.GetValue(item);
-                        //if ((Int32)key == value) return IndexOf(item);
-                        if ((property.GetValue(item) as Int32?).Equals(Int32.Parse((string)key)))
-                        {
-                            return IndexOf(item);
-                        }
+                        Int32 value = (Int32)property.GetValue(item);
+                        if ((Int32)key == value) return IndexOf(item);
                     }
 
 
@@ -242,10 +237,6 @@ namespace CisLab4
                 this.model = model;
             }
 
-            public override string ToString()
-            {
-                return String.Format("{0} {1} ({2} hp)", this.Model, this.Displacement, this.HorsePower);
-            }
         }
 
         public class Program
@@ -366,46 +357,7 @@ namespace CisLab4
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            this.toolStrip1.Find(this.toolStrip1, this.toolStripTextBox1.Text, this.toolStripComboBox1.SelectedText);
-            //Find(dataGridView1.DataSource as BindingSource, toolStripComboBox1.SelectedItem as PropertyInfo, this.toolStripTextBox1.Text);
-            var source = dataGridView1.DataSource;
-            var property = toolStripComboBox1.SelectedItem.ToString();
-            var key = this.toolStripTextBox1.Text;
-
-            string searchValue = toolStripTextBox1.Text;
-
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            try
-            {
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-                    if (row.Cells[property].Value.ToString().Equals(searchValue))
-                    {
-                        row.Selected = true;
-                        break;
-                    }
-                }
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show(exc.Message);
-            }
-
-            
-        }
-
-
-        public void Find(BindingSource source, PropertyInfo property, string key)
-        {
-
-            PropertyDescriptorCollection properties =
-              ((ITypedList)source).GetItemProperties(null);
-
-
-            // Find a value in a column
-            int index = source.Find(property.Name, key);
-            if (index != -1) dataGridView1.CurrentCell = dataGridView1.Rows[index].Cells[0];
-
+            this.toolStrip1.Find(this.toolStrip1);
         }
 
         private void toolStripComboBox1_Click(object sender, EventArgs e)
@@ -453,16 +405,6 @@ namespace CisLab4
                 this.carBindingSource.Position = e.Index;
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-            foreach (DataGridViewRow item in this.dataGridView1.SelectedRows)
-            {
-                dataGridView1.Rows.RemoveAt(item.Index);
-            }
-        }
-        
 
     }
 }

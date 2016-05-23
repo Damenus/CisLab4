@@ -242,10 +242,6 @@ namespace CisLab4
                 this.model = model;
             }
 
-            public override string ToString()
-            {
-                return String.Format("{0} {1} ({2} hp)", this.Model, this.Displacement, this.HorsePower);
-            }
         }
 
         public class Program
@@ -369,7 +365,7 @@ namespace CisLab4
             this.toolStrip1.Find(this.toolStrip1, this.toolStripTextBox1.Text, this.toolStripComboBox1.SelectedText);
             //Find(dataGridView1.DataSource as BindingSource, toolStripComboBox1.SelectedItem as PropertyInfo, this.toolStripTextBox1.Text);
             var source = dataGridView1.DataSource;
-            var property = toolStripComboBox1.SelectedItem.ToString();
+            var property = toolStripComboBox1.SelectedItem;
             var key = this.toolStripTextBox1.Text;
 
             string searchValue = toolStripTextBox1.Text;
@@ -379,7 +375,7 @@ namespace CisLab4
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
-                    if (row.Cells[property].Value.ToString().Equals(searchValue))
+                    if (row.Cells[2].Value.ToString().Equals(searchValue))
                     {
                         row.Selected = true;
                         break;
@@ -453,16 +449,6 @@ namespace CisLab4
                 this.carBindingSource.Position = e.Index;
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-            foreach (DataGridViewRow item in this.dataGridView1.SelectedRows)
-            {
-                dataGridView1.Rows.RemoveAt(item.Index);
-            }
-        }
-        
 
     }
 }
